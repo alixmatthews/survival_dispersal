@@ -1,4 +1,4 @@
-# survival_dispersal
+# Feather mite survival and dispersal analyses
 R code for feather mite survival and dispersal analyses
 
 ## transform_data.R
@@ -12,6 +12,8 @@ This script is step-by-step through the analyses for the manuscript, separated b
 
 ### file(s) to be used with Survival_Dispersal_Full_R_Code_Clean.R
 ```mite_DDT_recode.csv``` - file for the 'days til death' analyses
+
 ```mite_survival_2019_2020_recode.csv``` - file for the survival analyses
+
 ```mite_dispersal_2019_2020_recode.csv``` - file for the dispersal analyses
 
