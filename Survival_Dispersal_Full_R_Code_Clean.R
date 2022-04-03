@@ -1,10 +1,10 @@
 #### Mite Survival, Dispersal, and Days Until Death Analyses
 #### Alix Matthews
-#### 4 February 2022
+#### 4 February 2022, updated 3 April 2022
 #### -- I recoded the original databases (individual bird names...) and cleaned the code so that results are reproducible and easy to follow.
 #### R version 3.6.3
 
-setwd("xxx")
+setwd("~/Desktop/Mites/Survival/Data")
 
 #### DAYS UNTIL DEATH ANALYSES ####
 #### load libraries, versions to side
@@ -18,8 +18,8 @@ library(dplyr) # 1.0.7
 library(survminer) # 0.4.9
 
 #### read in data and view, ensure subset is correct
-data_main <- read.csv(file = "mite_DDT_recode.csv", sep = ",")
-str(data_main)
+data <- read.csv(file = "mite_DDT_recode.csv", sep = ",")
+str(data)
 
 data<-subset(data, Bird_ID !="")
 levels(data$Bird_ID)
@@ -328,10 +328,10 @@ print(fit_km_amero, print.rmean=TRUE)
 # Plot the survival curve as Kaplan-Meier plots. pval of a log-rank test is displayed as well! ggplot graphics. This plot has all sorts of customizations on it to show their availability.
 
 # with Risk table
-ggsurvplot(fit_km_amero, data=surv_data_amero, conf.int= TRUE, pval = TRUE, pval.method = TRUE, risk.table = TRUE, fontsize=4, risk.table.height=0.25, legend.labs=c("Amerodectes ischyros", "Amerodectes protonotaria"), legend.title = "Species", font.x = c(14, "plain", "black"), font.y = c(14, "plain", "black"), palette = c("#0072B2", "#E69F00"), xlab = "Time (days)")
+ggsurvplot(fit_km_amero, data=surv_data_amero, conf.int= TRUE, pval = TRUE, pval.method = TRUE, risk.table = TRUE, fontsize=4, risk.table.height=0.25, legend.labs=c("Amerodectes ischyros", "Amerodectes protonotaria"), legend.title = "Species", font.x = c(14, "plain", "black"), font.y = c(14, "plain", "black"), palette = c("#0072B2", "#E69F00"), xlab = "Time (days)", conf.int.alpha = 0.55)
 
 # without Risk table
-Fig_surv<-ggsurvplot(fit_km_amero, data=surv_data_amero, conf.int= TRUE, pval = FALSE, pval.method = TRUE, risk.table = FALSE, fontsize=4, legend.labs=c("Amerodectes ischyros", "Amerodectes protonotaria"), legend.title = "Species", font.x = c(18, "bold"), font.y = c(18, "bold"), font.tickslab = c(14, "plain"), palette = c("#0072B2", "#E69F00"), xlab = "Time (days)")
+Fig_surv<-ggsurvplot(fit_km_amero, data=surv_data_amero, conf.int= TRUE, pval = FALSE, pval.method = TRUE, risk.table = FALSE, fontsize=4, legend.labs=c("Amerodectes ischyros", "Amerodectes protonotaria"), legend.title = "Species", font.x = c(18, "bold"), font.y = c(18, "bold"), font.tickslab = c(14, "plain"), palette = c("#0072B2", "#E69F00"), xlab = "Time (days)", conf.int.alpha = 0.55)
 
 Fig_surv$plot <- Fig_surv$plot +
     theme(legend.title = element_text(size = 16, face = "bold"), legend.text = element_text(size = 16, face = "italic"))
@@ -342,7 +342,7 @@ grid.draw.ggsurvplot <- function(x){
 }
 
 # Figure used in manuscript
-# ggsave("Fig_surv.tiff", Fig_surv)
+# ggsave("Fig_surv_v2.tiff", Fig_surv)
 
 
 # view output from log-rank test (i.e., are there differences in survival between the two groups?)
@@ -352,6 +352,8 @@ surv_pvalue(fit_km_amero) # Yes!
 # calculate pairwise comparisons between group levels with corrections for multiple testing
 pairwise_survdiff(Surv(day,event) ~ mite_species, data = surv_data_amero, p.adjust.method = "fdr", rho = 0)
 
+# can use this to obtain DF and chisq value
+survdiff(Surv(day,event) ~ mite_species, data = surv_data_amero, rho = 0)
 
 
 # Fit a Cox PH regression model, just by mite species; this can assess both categorical and continuous variables, and can model the effect of multiple variables at once.
@@ -439,11 +441,16 @@ surv_pvalue(fit_km)
 
 pairwise_survdiff(Surv(day,event) ~ mite_species, data = disp_data_amero, p.adjust.method = "fdr", rho = 0)
 
+# can use this to obtain DF and chisq value
+survdiff(Surv(day,event) ~ mite_species, data = disp_data_amero, rho = 0)
+
+
+
 ggsurvplot(fit_km, data=disp_data_amero, conf.int= TRUE, pval = TRUE)
-ggsurvplot(fit_km, data=disp_data_amero, conf.int= TRUE, pval = TRUE, fun = "event")
+ggsurvplot(fit_km, data=disp_data_amero, conf.int= TRUE, pval = TRUE, fun = "cumhaz")
 
 
-Fig_disp<-ggsurvplot(fit_km, data=disp_data_amero, conf.int= TRUE, pval = FALSE, fun = "event", risk.table = FALSE, fontsize=4, legend.labs=c("Amerodectes ischyros", "Amerodectes protonotaria"), legend.title = "Species", font.x = c(18, "bold"), font.y = c(18, "bold"), font.tickslab = c(14, "plain"), palette = c("#0072B2", "#E69F00"), xlab = "Time (days)", ylab = "Cumulative dispersal")
+Fig_disp<-ggsurvplot(fit_km, data=disp_data_amero, conf.int= TRUE, pval = FALSE, fun = "cumhaz", risk.table = FALSE, fontsize=4, legend.labs=c("Amerodectes ischyros", "Amerodectes protonotaria"), legend.title = "Species", font.x = c(18, "bold"), font.y = c(18, "bold"), font.tickslab = c(14, "plain"), palette = c("#0072B2", "#E69F00"), xlab = "Time (days)", ylab = "Cumulative dispersal hazard", conf.int.alpha = 0.55)
 
 
 Fig_disp$plot <- Fig_disp$plot +
@@ -455,7 +462,7 @@ grid.draw.ggsurvplot <- function(x){
 }
 
 # Figure used in manuscript
-# ggsave("Fig_disp.tiff", Fig_disp)
+# ggsave("Fig_disp2.tiff", Fig_disp)
 
 
 fit_cph <- coxph(surv ~ mite_species, data = disp_data_amero)
