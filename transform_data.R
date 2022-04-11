@@ -14,8 +14,7 @@ colnames(data) <- c("bird_id", "host_species", "mite_species")
 surv_data <- data.frame()
 
 # The column indices of each day in the count table (increases by 2)
-# day_indices <- seq(4, 28, 2) # original data (12 days + day 0 = 13 days)
-day_indices <- seq(4, 38, 2) # this is 17 indices for the 17 days
+day_indices <- seq(4, 38, 2) # this is 17 indices for the 17 days (38-4 = 17*2 = 34)
 
 # Loop through each row in the count table
 for(row_index in 1:nrow(data))
