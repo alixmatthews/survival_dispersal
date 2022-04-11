@@ -21,7 +21,6 @@ for(row_index in 1:nrow(data))
 {
     row <- data[row_index, ]
     
-    # Loop through each day (ignore day 0 [index == 1], end at day 12 [index == 13]) - original data
     # Loop through each day (ignore day 0 [index == 1], end at day 17 [index == 18]) - new 2019_2020 data
     for(index in 2:18)
     {
