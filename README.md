@@ -1,6 +1,8 @@
 # Feather mite survival and dispersal analyses
 R code for feather mite survival and dispersal analyses
 
+Associated manuscript: http://doi.org/10.1111/een.13176
+
 ## transform_data.R
 This script, created by Joseph Scavetta, takes in the original data as imported during collection (raw) and transforms it for use in the survival and dispersal analyses.
 
